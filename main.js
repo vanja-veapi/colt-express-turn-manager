@@ -76,8 +76,6 @@ window.addEventListener('load', () => {
 
 	const btnNextRound = document.querySelector('button');
 
-	// main Funkcija playNextRound()
-	// fn nextStartingPlayer()
 	btnNextRound.addEventListener('click', playNextRound);
 });
 
@@ -106,32 +104,31 @@ const playNextRound = () => {
 	// Refreshing DOM with latest changes
 	const chosenContainer = refreshChosenContainer();
 
-	// ===== Start  nextStartingPlayer()
-	nextStartingPlayer(chosenContainer);
+	updatePlayerOrder(chosenContainer);
 };
 
-const nextStartingPlayer = (chosenContainer) => {
-	const characterOrders = [];
+const updatePlayerOrder = (chosenContainer) => {
+	const characterOrders = getCurrentPlayersTurn(chosenContainer);
 
-	getCurrentPlayersTurn({ characterOrders, chosenContainer });
+	rotatePlayersOrder(characterOrders);
 
-	const firstElement = characterOrders.shift();
-	characterOrders.push(firstElement);
-
-	renderNewOrder({ characterOrders, chosenContainer });
+	renderNewOrder({ chosenContainer, characterOrders });
 };
 
-const getCurrentPlayersTurn = ({ chosenContainer, characterOrders }) =>
-	chosenContainer.childNodes.forEach((child) => {
-		characterOrders.push(child);
-	});
+const getCurrentPlayersTurn = (chosenContainer) => Array.from(chosenContainer.children);
 
-const renderNewOrder = ({ chosenContainer, characterOrders }) =>
-	// This was primarly idea, but it didn't work, because I was passing just contet, without styling
-	// chosenContainer.innerHTML = characterOrders.map((el) => el.innerHTML).join('');
+const renderNewOrder = ({ chosenContainer, characterOrders }) => {
+	chosenContainer.innerHTML = '';
+
 	characterOrders.forEach((character) => {
 		chosenContainer.appendChild(character);
 	});
+};
+
+const rotatePlayersOrder = (characterOrders) => {
+	const firstElement = characterOrders.shift();
+	characterOrders.push(firstElement);
+};
 
 const COLORS = {
 	0: 'red',
