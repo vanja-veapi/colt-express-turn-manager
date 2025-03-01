@@ -81,8 +81,13 @@ window.addEventListener('load', () => {
 	});
 
 	const btnNextRound = document.querySelector('button');
-
 	btnNextRound.addEventListener('click', playNextRound);
+
+	const btnRestart = document.querySelector('#btn-restart');
+	btnRestart.addEventListener('click', () => {
+		holders.forEach((holder) => (holder.innerHTML = ''));
+		generatePlayers(6);
+	});
 });
 
 /**
