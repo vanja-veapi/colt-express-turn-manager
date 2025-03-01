@@ -39,12 +39,16 @@ window.addEventListener('load', () => {
 	const holders = this.document.querySelectorAll('.holder');
 	holders.forEach((holder) => {
 		holder.addEventListener('dragenter', (ev) => {
+			if (ev.target.id !== 'chosen-container') return null;
+
 			if ([...ev.target.classList].includes('holder')) {
 				ev.target.classList.add('hovered');
 			}
 		});
 
 		holder.addEventListener('dragleave', (ev) => {
+			if (ev.target.id !== 'chosen-container') return null;
+
 			if ([...ev.target.classList].includes('holder')) {
 				ev.target.classList.remove('hovered');
 			}
@@ -52,6 +56,8 @@ window.addEventListener('load', () => {
 
 		let playerOrderIndex = 0;
 		holder.addEventListener('drop', (ev) => {
+			if (ev.target.id !== 'chosen-container') return null;
+
 			ev.preventDefault();
 
 			const characterIndex = ev.dataTransfer.getData('text/plain'); // Uzimamo index
