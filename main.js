@@ -40,7 +40,7 @@ window.addEventListener('load', () => {
 });
 
 const handleDragEnter = (ev) => {
-	if (ev.target.id !== 'chosen-container') return;
+	// if (ev.target.id !== 'chosen-container') return;
 
 	if (ev.target.classList.contains('holder')) {
 		ev.target.classList.add('hovered');
@@ -48,7 +48,7 @@ const handleDragEnter = (ev) => {
 };
 
 const handleDragLeave = (ev) => {
-	if (ev.target.id !== 'chosen-container') return null;
+	// if (ev.target.id !== 'chosen-container') return null;
 
 	if ([...ev.target.classList].includes('holder')) {
 		ev.target.classList.remove('hovered');
@@ -56,19 +56,28 @@ const handleDragLeave = (ev) => {
 };
 
 const handleDrop = (ev) => {
-	if (ev.target.id !== 'chosen-container') return null;
+	if (ev.target.id !== 'chosen-container' && ev.target.id !== 'choose-players') return null;
 
 	ev.preventDefault();
 
 	const characterId = ev.dataTransfer.getData('text'); // Uzimamo id elementa koji je dragovan
 	const character = document.querySelector(`#${characterId}`);
 
-	if (character) {
-		character.textContent = ++INITIAL_STATE.playerOrderIndex;
+	// ! Ostaje bug kada se element vrati u prvu kolonu da se brojevi u "chosen-container" ne menjaju
+	// ! npr redosled 1,2,3,4 -> i dragujemo 2 nazad, redosled ce biti 1,3,4
+	// ! Ali svakako tu treba slike da budu tako da se brojevi nece pisati
 
-		ev.target.appendChild(character);
-		character.classList.remove('invisible');
+	if (!character) return null;
+
+	if (ev.target.id === 'chosen-container') {
+		character.textContent = ++INITIAL_STATE.playerOrderIndex;
+	} else {
+		INITIAL_STATE.playerOrderIndex -= 1;
+		character.textContent = '';
 	}
+
+	ev.target.appendChild(character);
+	character.classList.remove('invisible');
 
 	ev.target.classList.remove('hovered');
 
