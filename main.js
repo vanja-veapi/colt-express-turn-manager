@@ -19,21 +19,7 @@
 window.addEventListener('load', () => {
 	generatePlayers(6);
 
-	// JAKO GLUPO! - Da nemam JSDoc, ne bi mogao da mi nadje nijedan dogadjaj
-	/** @type {NodeListOf<HTMLDivElement>} */
-	const characters = document.querySelectorAll('.character');
-
-	characters.forEach((character, index) => {
-		character.addEventListener('dragstart', (ev) => {
-			// ev.dataTransfer.setData('text/plain', character.outerHTML); // Radilo
-			ev.dataTransfer.setData('text/plain', index);
-			setTimeout(() => ev.target.classList.add('invisible'), 0);
-		});
-
-		character.addEventListener('dragend', (ev) => {
-			ev.target.classList.remove('invisible');
-		});
-	});
+	let playerOrderIndex = 0;
 
 	/** @type {NodeListOf<HTMLDivElement>} */
 	const holders = this.document.querySelectorAll('.holder');
@@ -54,18 +40,17 @@ window.addEventListener('load', () => {
 			}
 		});
 
-		let playerOrderIndex = 0;
 		holder.addEventListener('drop', (ev) => {
 			if (ev.target.id !== 'chosen-container') return null;
 
 			ev.preventDefault();
 
-			const characterIndex = ev.dataTransfer.getData('text/plain'); // Uzimamo index
-			const character = characters[characterIndex]; // Dohvatamo character iz NodeList-a po indexu
+			const characterId = ev.dataTransfer.getData('text'); // Uzimamo index
+
+			const character = document.querySelector(`#${characterId}`); // Dohvatamo character iz NodeList-a po indexu
 
 			if (character) {
 				playerOrderIndex++;
-
 				character.textContent = playerOrderIndex;
 
 				holder.appendChild(character);
@@ -86,6 +71,8 @@ window.addEventListener('load', () => {
 	const btnRestart = document.querySelector('#btn-restart');
 	btnRestart.addEventListener('click', () => {
 		holders.forEach((holder) => (holder.innerHTML = ''));
+
+		playerOrderIndex = 0;
 		generatePlayers(6);
 	});
 });
@@ -101,7 +88,27 @@ function generatePlayers(totalPlayers) {
 			throw new Error('Broj igrača mora biti između 2 i 6!');
 		}
 
-		renderPlayers(totalPlayers);
+		renderPlayers(totalPlayers); // Kreiramo nove igrače
+
+		/** @type {NodeListOf<HTMLDivElement>} */
+		const characters = document.querySelectorAll('.character');
+
+		// Dodajemo event listenere ponovo
+		characters.forEach((character) => {
+			character.addEventListener('dragstart', (ev) => {
+				console.log('Drag start:', ev.target.id);
+				ev.dataTransfer.clearData();
+				ev.dataTransfer.setData('text/plain', ev.target.id);
+
+				setTimeout(() => ev.target.classList.add('invisible'), 0);
+
+				ev.target.classList.add('invisible');
+			});
+
+			character.addEventListener('dragend', (ev) => {
+				ev.target.classList.remove('invisible');
+			});
+		});
 	} catch (err) {
 		console.error('Desila se greška:', err.message);
 	}
@@ -159,6 +166,7 @@ function renderPlayers(totalPlayers) {
 		div.className = 'character';
 		div.style.backgroundColor = COLORS[i];
 		div.setAttribute('draggable', 'true');
+		div.setAttribute('id', `player-${i + 1}`);
 
 		container.appendChild(div);
 	}
