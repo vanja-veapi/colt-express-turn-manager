@@ -6,15 +6,12 @@
 // *
 // * Kako radi program?
 // *
-// * 1.
+// TODO * 1. dodati prvi screen play game
+// TODO * 2. Klikom na dugme Start Game, prelazi se na sledeci skrin odabir igrača
+// TODO * 3. Korisnik bira igraca i zapocinje igru na dugme Play
 // * 2. Kada se potez završi klikne se dugme Next Round
 // * 3. Prvi koji je igrao ide na začelje, a drugi igrač dolazi na prvo mesto
 //  */
-// TODO - 1. Omoguciti formu za unos broja igraca
-// TODO - 2. Omoguciti dinamican odabir boja
-// TODO - 3. Cuvati raspored kutija
-// TODO - 4- Dodati brojeve u kutije. Brojevi predstavljaju redosled koji je prvi dodat
-// TODO - 4.1. Dodati dugme "Next round" - Koji ce da menja broj koji se nalazi unutar kocke (trenutno je unutar, ako se menja dizajn moze i negde drugde)
 
 const INITIAL_STATE = {
 	playerOrderIndex: 0,
