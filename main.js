@@ -16,51 +16,21 @@
 // TODO - 4- Dodati brojeve u kutije. Brojevi predstavljaju redosled koji je prvi dodat
 // TODO - 4.1. Dodati dugme "Next round" - Koji ce da menja broj koji se nalazi unutar kocke (trenutno je unutar, ako se menja dizajn moze i negde drugde)
 
+const INITIAL_STATE = {
+	playerOrderIndex: 0,
+};
+
 window.addEventListener('load', () => {
 	generatePlayers(6);
 
-	let playerOrderIndex = 0;
-
 	/** @type {NodeListOf<HTMLDivElement>} */
-	const holders = this.document.querySelectorAll('.holder');
+	const holders = document.querySelectorAll('.holder');
 	holders.forEach((holder) => {
-		holder.addEventListener('dragenter', (ev) => {
-			if (ev.target.id !== 'chosen-container') return null;
+		holder.addEventListener('dragenter', handleDragEnter);
 
-			if ([...ev.target.classList].includes('holder')) {
-				ev.target.classList.add('hovered');
-			}
-		});
+		holder.addEventListener('dragleave', handleDragLeave);
 
-		holder.addEventListener('dragleave', (ev) => {
-			if (ev.target.id !== 'chosen-container') return null;
-
-			if ([...ev.target.classList].includes('holder')) {
-				ev.target.classList.remove('hovered');
-			}
-		});
-
-		holder.addEventListener('drop', (ev) => {
-			if (ev.target.id !== 'chosen-container') return null;
-
-			ev.preventDefault();
-
-			const characterId = ev.dataTransfer.getData('text'); // Uzimamo index
-
-			const character = document.querySelector(`#${characterId}`); // Dohvatamo character iz NodeList-a po indexu
-
-			if (character) {
-				playerOrderIndex++;
-				character.textContent = playerOrderIndex;
-
-				holder.appendChild(character);
-				character.classList.remove('invisible');
-			}
-
-			ev.target.classList.remove('hovered');
-
-			refreshChosenContainer();
-		});
+		holder.addEventListener('drop', handleDrop);
 
 		holder.addEventListener('dragover', (ev) => ev.preventDefault());
 	});
@@ -69,20 +39,59 @@ window.addEventListener('load', () => {
 	btnNextRound.addEventListener('click', playNextRound);
 
 	const btnRestart = document.querySelector('#btn-restart');
-	btnRestart.addEventListener('click', () => {
-		holders.forEach((holder) => (holder.innerHTML = ''));
-
-		playerOrderIndex = 0;
-		generatePlayers(6);
-	});
+	btnRestart.addEventListener('click', handleRestart);
 });
+
+const handleDragEnter = (ev) => {
+	if (ev.target.id !== 'chosen-container') return;
+
+	if (ev.target.classList.contains('holder')) {
+		ev.target.classList.add('hovered');
+	}
+};
+
+const handleDragLeave = (ev) => {
+	if (ev.target.id !== 'chosen-container') return null;
+
+	if ([...ev.target.classList].includes('holder')) {
+		ev.target.classList.remove('hovered');
+	}
+};
+
+const handleDrop = (ev) => {
+	if (ev.target.id !== 'chosen-container') return null;
+
+	ev.preventDefault();
+
+	const characterId = ev.dataTransfer.getData('text'); // Uzimamo id elementa koji je dragovan
+	const character = document.querySelector(`#${characterId}`);
+
+	if (character) {
+		character.textContent = ++INITIAL_STATE.playerOrderIndex;
+
+		ev.target.appendChild(character);
+		character.classList.remove('invisible');
+	}
+
+	ev.target.classList.remove('hovered');
+
+	refreshChosenContainer();
+};
+
+const handleRestart = () => {
+	const holders = document.querySelectorAll('.holder');
+	holders.forEach((holder) => (holder.innerHTML = ''));
+
+	INITIAL_STATE.playerOrderIndex = 0;
+	generatePlayers(6);
+};
 
 /**
  * Maxmimum is 6 and minimum is 2
  * @param {number} totalPlayers
  * @returns
  */
-function generatePlayers(totalPlayers) {
+const generatePlayers = (totalPlayers) => {
 	try {
 		if (!isValidPlayerCount(totalPlayers)) {
 			throw new Error('Broj igrača mora biti između 2 i 6!');
@@ -93,26 +102,23 @@ function generatePlayers(totalPlayers) {
 		/** @type {NodeListOf<HTMLDivElement>} */
 		const characters = document.querySelectorAll('.character');
 
-		// Dodajemo event listenere ponovo
+		const handleDragStart = (ev) => {
+			ev.dataTransfer.clearData();
+			ev.dataTransfer.setData('text/plain', ev.target.id);
+
+			setTimeout(() => ev.target.classList.add('invisible'), 0);
+		};
+
+		const handleDragEnd = (ev) => ev.target.classList.remove('invisible');
+
 		characters.forEach((character) => {
-			character.addEventListener('dragstart', (ev) => {
-				console.log('Drag start:', ev.target.id);
-				ev.dataTransfer.clearData();
-				ev.dataTransfer.setData('text/plain', ev.target.id);
-
-				setTimeout(() => ev.target.classList.add('invisible'), 0);
-
-				ev.target.classList.add('invisible');
-			});
-
-			character.addEventListener('dragend', (ev) => {
-				ev.target.classList.remove('invisible');
-			});
+			character.addEventListener('dragstart', handleDragStart);
+			character.addEventListener('dragend', handleDragEnd);
 		});
 	} catch (err) {
 		console.error('Desila se greška:', err.message);
 	}
-}
+};
 
 const refreshChosenContainer = () => document.querySelector('#chosen-container');
 
