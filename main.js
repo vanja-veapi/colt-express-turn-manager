@@ -18,6 +18,8 @@ const INITIAL_STATE = {
 };
 
 window.addEventListener('load', () => {
+	window.DragDropTouch.enable();
+
 	generatePlayers(6);
 
 	/** @type {NodeListOf<HTMLDivElement>} */
