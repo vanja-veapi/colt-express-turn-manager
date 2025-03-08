@@ -18,8 +18,6 @@ const INITIAL_STATE = {
 };
 
 window.addEventListener('load', () => {
-	window.DragDropTouch.enable();
-
 	generatePlayers(6);
 
 	/** @type {NodeListOf<HTMLDivElement>} */
@@ -69,11 +67,11 @@ const handleDrop = (ev) => {
 	if (!character) return null;
 
 	if (ev.target.id === 'chosen-container') {
-		characterOverlay.classList.add('none');
+		// characterOverlay.classList.add('none');
 	}
 
 	if (ev.target.id === 'choose-players') {
-		characterOverlay.classList.remove('none');
+		// characterOverlay.classList.remove('none');
 
 		INITIAL_STATE.playerOrderIndex -= 1;
 	}
@@ -189,10 +187,10 @@ function renderPlayers(totalPlayers) {
 
 		div.appendChild(img);
 
-		const overlay = document.createElement('div');
-		overlay.classList.add('overlay', 'flex', 'justify-center', 'align-center');
-		overlay.textContent = CHARACTER_NAMES[i];
-		div.appendChild(overlay);
+		// const overlay = document.createElement('div');
+		// overlay.classList.add('overlay', 'flex', 'justify-center', 'align-center');
+		// overlay.textContent = CHARACTER_NAMES[i];
+		// div.appendChild(overlay);
 
 		container.appendChild(div);
 	}
