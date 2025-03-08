@@ -58,6 +58,7 @@ const handleDrop = (ev) => {
 
 	const characterId = ev.dataTransfer.getData('text'); // Uzimamo id elementa koji je dragovan
 	const character = document.querySelector(`#${characterId}`);
+	const characterOverlay = character.querySelector('.overlay');
 
 	// ! Ostaje bug kada se element vrati u prvu kolonu da se brojevi u "chosen-container" ne menjaju
 	// ! npr redosled 1,2,3,4 -> i dragujemo 2 nazad, redosled ce biti 1,3,4
@@ -65,7 +66,13 @@ const handleDrop = (ev) => {
 
 	if (!character) return null;
 
-	if (ev.target.id !== 'chosen-container') {
+	if (ev.target.id === 'chosen-container') {
+		characterOverlay.classList.add('none');
+	}
+
+	if (ev.target.id === 'choose-players') {
+		characterOverlay.classList.remove('none');
+
 		INITIAL_STATE.playerOrderIndex -= 1;
 	}
 
@@ -169,7 +176,7 @@ function renderPlayers(totalPlayers) {
 		const div = document.createElement('div');
 		const img = document.createElement('img');
 
-		div.className = 'character';
+		div.classList.add('character');
 		img.src = `./assets/images/${CHARACTER_NAMES[i]}.jpg`;
 		img.alt = CHARACTER_NAMES[i];
 		img.setAttribute('draggable', 'true');
@@ -181,7 +188,7 @@ function renderPlayers(totalPlayers) {
 		div.appendChild(img);
 
 		const overlay = document.createElement('div');
-		overlay.className = 'overlay';
+		overlay.classList.add('overlay', 'flex', 'justify-center', 'align-center');
 		overlay.textContent = CHARACTER_NAMES[i];
 		div.appendChild(overlay);
 
