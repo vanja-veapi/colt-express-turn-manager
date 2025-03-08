@@ -13,12 +13,14 @@
 // * 3. Prvi koji je igrao ide na začelje, a drugi igrač dolazi na prvo mesto
 //  */
 
+import { enableDragDropTouch } from './assets/scripts/drag-drop-touch.esm.min.js';
 const INITIAL_STATE = {
 	playerOrderIndex: 0,
 };
 
 window.addEventListener('load', () => {
 	generatePlayers(6);
+	console.log(enableDragDropTouch);
 
 	/** @type {NodeListOf<HTMLDivElement>} */
 	const holders = document.querySelectorAll('.holder');
@@ -67,11 +69,11 @@ const handleDrop = (ev) => {
 	if (!character) return null;
 
 	if (ev.target.id === 'chosen-container') {
-		// characterOverlay.classList.add('none');
+		characterOverlay.classList.add('none');
 	}
 
 	if (ev.target.id === 'choose-players') {
-		// characterOverlay.classList.remove('none');
+		characterOverlay.classList.remove('none');
 
 		INITIAL_STATE.playerOrderIndex -= 1;
 	}
@@ -109,7 +111,8 @@ const generatePlayers = (totalPlayers) => {
 		const characters = document.querySelectorAll('.character');
 
 		const handleDragStart = (ev) => {
-			ev.dataTransfer.clearData();
+			// ! Ovo je pravilo problem biblioteci, prosledjivao sam prazan type u drag-drop-touch-esm.js
+			// ev.dataTransfer.clearData();
 			ev.dataTransfer.setData('text/plain', ev.target.id);
 
 			setTimeout(() => ev.target.classList.add('invisible'), 0);
@@ -187,10 +190,10 @@ function renderPlayers(totalPlayers) {
 
 		div.appendChild(img);
 
-		// const overlay = document.createElement('div');
-		// overlay.classList.add('overlay', 'flex', 'justify-center', 'align-center');
-		// overlay.textContent = CHARACTER_NAMES[i];
-		// div.appendChild(overlay);
+		const overlay = document.createElement('div');
+		overlay.classList.add('overlay', 'flex', 'justify-center', 'align-center');
+		overlay.textContent = CHARACTER_NAMES[i];
+		div.appendChild(overlay);
 
 		container.appendChild(div);
 	}
