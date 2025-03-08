@@ -40,16 +40,12 @@ window.addEventListener('load', () => {
 });
 
 const handleDragEnter = (ev) => {
-	// if (ev.target.id !== 'chosen-container') return;
-
 	if (ev.target.classList.contains('holder')) {
 		ev.target.classList.add('hovered');
 	}
 };
 
 const handleDragLeave = (ev) => {
-	// if (ev.target.id !== 'chosen-container') return null;
-
 	if ([...ev.target.classList].includes('holder')) {
 		ev.target.classList.remove('hovered');
 	}
@@ -69,11 +65,8 @@ const handleDrop = (ev) => {
 
 	if (!character) return null;
 
-	if (ev.target.id === 'chosen-container') {
-		character.textContent = ++INITIAL_STATE.playerOrderIndex;
-	} else {
+	if (ev.target.id !== 'chosen-container') {
 		INITIAL_STATE.playerOrderIndex -= 1;
-		character.textContent = '';
 	}
 
 	ev.target.appendChild(character);
@@ -160,13 +153,13 @@ const rotatePlayersOrder = (characterOrders) => {
 	characterOrders.push(firstElement);
 };
 
-const COLORS = {
-	0: 'red',
-	1: 'blue',
-	2: 'green',
-	3: 'purple',
-	4: 'gray',
-	5: 'cyan',
+const CHARACTER_NAMES = {
+	0: 'Belle',
+	1: 'Doc',
+	2: 'Cheyenne',
+	3: 'Tuco',
+	4: 'Ghost',
+	5: 'Django',
 };
 
 function renderPlayers(totalPlayers) {
@@ -174,11 +167,23 @@ function renderPlayers(totalPlayers) {
 
 	for (let i = 0; i < totalPlayers; i++) {
 		const div = document.createElement('div');
+		const img = document.createElement('img');
 
 		div.className = 'character';
-		div.style.backgroundColor = COLORS[i];
+		img.src = `./assets/images/${CHARACTER_NAMES[i]}.jpg`;
+		img.alt = CHARACTER_NAMES[i];
+		img.setAttribute('draggable', 'true');
 		div.setAttribute('draggable', 'true');
+
+		img.setAttribute('id', `player-${i + 1}`);
 		div.setAttribute('id', `player-${i + 1}`);
+
+		div.appendChild(img);
+
+		const overlay = document.createElement('div');
+		overlay.className = 'overlay';
+		overlay.textContent = CHARACTER_NAMES[i];
+		div.appendChild(overlay);
 
 		container.appendChild(div);
 	}
